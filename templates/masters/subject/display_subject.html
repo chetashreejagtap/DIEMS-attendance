@@ -1,0 +1,54 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            {% if message %}
+                <div class="alert alert-fill alert-success alert-icon">
+                    <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+                </div>
+            {% endif %}
+            {% if error %}
+                <div class="alert alert-fill alert-danger alert-icon">
+                    <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error }}
+                </div>
+            {% endif %}
+            <form action="#" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject_name">Subject Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-subject_name" name="subject_name" required value="{{ subject_name }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-sem">Semester</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-sem" name="sem"
+                                    data-placeholder="Select a option" required>
+
+                                    {% for s in semesters %}
+                                        <option value="{{ s.id }}" {% if s.id == sem %} selected {% endif %}>Sem {{ s.sem_num }} {{ s.get_sem_year_display }} {{ s.department.short }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Update Subject</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+{% endblock %}

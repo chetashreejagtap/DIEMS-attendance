@@ -1,0 +1,74 @@
+{% extends "dashboard/base.html" %} {% block content %}
+<div class="nk-block nk-block-lg">
+  {% if error %}
+  <div class="alert alert-danger alert-icon">
+    <span><em class="icon ni ni-cross-circle"></em></span>
+    {{ error }}
+  </div>
+  <div class="col-md-12">
+    <div class="form-group">
+      <a href="{% url 'take_attendance'%}"
+        ><button type="submit" class="btn btn-lg btn-primary">
+          Back to Take Attendance
+        </button></a
+      >
+    </div>
+  </div>
+  {% endif %}
+  <div class="card card-bordered">
+    <div class="card-inner">
+      <form
+        method="POST"
+        action="{% url 'markmarks' %}"
+        class="form-validate is-alter"
+      >
+        {% csrf_token %}
+        <div class="row g-gs">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Enter Marks</th>
+                    {# Add this column #}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in students %}
+                  <tr>
+                    <td>{{ student.roll_no }}</td>
+                    <td>
+                      {{student.first_name}} {{student.middle_name}}
+                      {{student.last_name}}
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="mark_{{ student.id }}"
+                        id="mark_{{ student.id }}"
+                      />
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <button type="submit" class="btn btn-lg btn-primary">
+                Submit Marks
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- .nk-block -->
+{% endblock %}

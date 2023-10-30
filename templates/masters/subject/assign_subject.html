@@ -1,0 +1,398 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error }}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form action="#" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-teacher">Teacher</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-teacher" name="teacher"
+                                        data-placeholder="Select a teacher" required>
+                                    <option label="empty" value=""></option>
+                                    {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-semester">Semester</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-semester" name="fva-semester"
+                                        data-placeholder="Select a Semester" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in semesters %}
+                                    <option value="{{ s.id }}"> Sem {{ s.sem_num }} {{ s.get_sem_year_display }} {{ s.department.short }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Subject Type</label>
+                            <div class="form-control-wrap">
+                                <div class="custom-control custom-radio custom-control-lg col-md-3">
+                                    <input type="radio" id="customRadio1" name="subject_type" value="1"
+                                           class="custom-control-input" required>
+                                    <label class="custom-control-label" for="customRadio1">Theory</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-lg col-md-3">
+                                    <input type="radio" id="customRadio2" name="subject_type" value="2"
+                                           class="custom-control-input" required>
+                                    <label class="custom-control-label" for="customRadio2">Practical</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-lg col-md-3">
+                                    <input type="radio" id="customRadio3" name="subject_type" value="3"
+                                           class="custom-control-input" required>
+                                    <label class="custom-control-label" for="customRadio3">Elective</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-lg col-md-2">
+                                    <input type="radio" id="customRadio4" name="subject_type" value="4"
+                                           class="custom-control-input" required>
+                                    <label class="custom-control-label" for="customRadio4">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject">Subject</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-subject" name="subject"
+                                        data-placeholder="Select a Subject" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-class">Class</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-class" name="sel_class"
+                                        data-placeholder="Select a Class" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="batch_id" >
+                        <div class="form-group">
+                            <label class="form-label" for="fva-sel-batch">Select Practical Batch</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-sel-batch" name="sel_batch"
+                                        data-placeholder="Select a batch" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="elective_id">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-sel-elective">Select Theory Elective</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-sel-elective" name="sel_elective"
+                                        data-placeholder="Select an elective" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Assign Subject</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+
+<div class="nk-block nk-block-lg">
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="nk-block-title">Subject Assignments</h4>
+        </div>
+    </div>
+    <div class="card card-preview">
+        <div class="card-inner">
+            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Teacher</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Subject</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Class</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Batch</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Elective</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Total Lectures</span></th>
+                    <th class="nk-tb-col nk-tb-col-tools"><span class="sub-text">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for subject_assignment in subject_assignments %}
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col tb-col-mb">
+                        <span class="tb-amount">{{ subject_assignment.teacher.first_name }} {{ subject_assignment.teacher.last_name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">({{ subject_assignment.subject.get_subject_type_display }}) {{ subject_assignment.subject.subject_name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject_assignment.sel_class.sem.get_sem_year_display }} {{ subject_assignment.sel_class.sem.department.name }} {{ subject_assignment.sel_class.name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject_assignment.sel_batch.batch_name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject_assignment.sel_elective.elective_name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject_assignment.total_lectures }}</span>
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-tools">
+                        <ul class="nk-tb-actions gx-1">
+                            <li class="nk-tb-action">
+                                <a href="{% url 'display_assign_subject' subject_assignment.id %}"
+                                   class="btn btn-trigger btn-icon" data-toggle="tooltip" data-placement="top"
+                                   title="Edit">
+                                    <em class="icon ni ni-edit-alt"></em>
+                                </a>
+                            </li>
+                            <li class="nk-tb-action">
+                                <button type="button" class="btn btn-trigger btn-icon" data-toggle="modal"
+                                        data-target="#confirmDeleteModal{{ subject_assignment.id }}"
+                                        data-placement="top" title="Delete">
+                                    <em class="icon ni ni-trash"></em>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                </tr><!-- .nk-tb-item  -->
+                <!-- Delete Subject Assignment Modal -->
+                <div class="modal fade" id="confirmDeleteModal{{ subject_assignment.id }}" tabindex="-1" role="dialog"
+                     aria-labelledby="confirmDeleteModalLabel{{ subject_assignment.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ subject_assignment.id }}">Confirm
+                                    Deletion</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this subject assignment?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <a href="{% url 'delete_assign_subject' subject_assignment.id %}"
+                                   class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-preview -->
+</div> <!-- nk-block -->
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // When the semester select box changes
+    $('#fva-semester').on('change', function() {
+        // Get the selected semester ID
+        var semId = $(this).val();
+
+        // Check if a semester is selected
+        if (semId) {
+            // Perform an AJAX request to get the classes
+            $.ajax({
+                url: '{% url "get_classes" %}', // Replace with your actual URL name
+                data: {'sem_id': semId},
+                dataType: 'json',
+                success: function(data) {
+                    var classSelect = $('#fva-class');
+                    classSelect.empty();
+                    classSelect.append('<option value="">Select Class</option>');
+
+                    // Populate the class select box with the retrieved classes
+                    $.each(data.classes, function(index, cls) {
+                        classSelect.append('<option value="' + cls.id + '">' + cls.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                    // Handle the error here if needed
+                }
+            });
+        } else {
+            // If no semester is selected, clear the class select box
+            $('#fva-class').empty();
+        }
+    });
+});
+
+
+
+
+
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#fva-class').on('change', function() {
+            var selectedClassId = $(this).val();
+
+            if (selectedClassId) {
+                // Make an AJAX request to fetch batches for the selected class
+                $.ajax({
+                    url: '{% url "get_batches" %}',  // Replace with your actual URL name
+                    data: {'class_id': selectedClassId},
+                    dataType: 'json',
+                    success: function(data) {
+                        var batchSelect = $('#fva-sel-batch');
+                        batchSelect.empty();
+                        batchSelect.append('<option label="empty" value=""></option>');
+
+                        $.each(data.batches, function(index, batch) {
+                            batchSelect.append('<option value="' + batch.id + '">' + batch.batch_name + '</option>');
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error('Error: ' + errorThrown);
+                    }
+                });
+
+                // Make an AJAX request to fetch electives for the selected class
+                $.ajax({
+                    url: '{% url "get_electives" %}',  // Replace with your actual URL name
+                    data: {'class_id': selectedClassId},
+                    dataType: 'json',
+                    success: function(data) {
+                        var electiveSelect = $('#fva-sel-elective');
+                        electiveSelect.empty();
+                        electiveSelect.append('<option label="empty" value=""></option>');
+
+                        $.each(data.electives, function(index, elective) {
+                            electiveSelect.append('<option value="' + elective.id + '">' + elective.elective_name + '</option>');
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error('Error: ' + errorThrown);
+                    }
+                });
+            } else {
+                // If no class is selected, clear the batch and elective select boxes
+                $('#fva-sel-batch').empty();
+                $('#fva-sel-elective').empty();
+            }
+        });
+    });
+
+
+
+
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Add an event listener to the radio buttons and dropdown
+        $('input[name="subject_type"], #fva-semester').on('change', function() {
+            var selectedSubjectType = $('input[name="subject_type"]:checked').val();
+            var selectedSemesterId = $('#fva-semester').val();
+
+            // Make an AJAX request to fetch subjects with the selected type and semester ID
+            $.ajax({
+                url: '{% url "get_subjects_by_type" %}',  // Replace with your actual URL name
+                data: {
+                    'subject_type': selectedSubjectType,
+                    'semester_id': selectedSemesterId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var subjectSelect = $('#fva-subject');
+                    subjectSelect.empty();
+                    subjectSelect.append('<option label="empty" value=""></option>');
+
+                    $.each(data.subjects, function(index, subject) {
+                        subjectSelect.append('<option value="' + subject.subject_id + '">' + subject.subject_name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+        $(document).ready(function() {
+            var b = document.getElementById("batch_id");
+            var e = document.getElementById("elective_id");
+
+            // Initially hide both Batch and Elective elements
+            $('#fva-sel-batch').removeAttr('required');
+            $('#fva-sel-elective').removeAttr('required');
+            b.style.display = "none";
+            e.style.display = "none";
+
+            $('input[name="subject_type"]').on('change', function() {
+                var selectedSubjectType = $(this).val();
+
+                $('#fva-sel-batch').removeAttr('required');
+                $('#fva-sel-elective').removeAttr('required');
+                b.style.display = "none";
+                e.style.display = "none";
+
+                if (selectedSubjectType === '2') {
+                    $('#fva-sel-batch').attr('required', 'required');
+                    b.style.display = "block";
+
+                } else if (selectedSubjectType === '3') {
+                    $('#fva-sel-elective').attr('required', 'required');
+                    e.style.display = "block";
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

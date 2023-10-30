@@ -1,0 +1,139 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error }}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-thumb_id">Thumb ID</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-thumb_id" name="thumb_id" placeholder="Enter Unique Thumb ID" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-first-name">First Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-first-name" name="first_name" placeholder="Enter First Name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-middle-name">Middle Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-middle-name" name="middle_name" placeholder="Enter Middle Name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-last-name">Last Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-last-name" name="last_name" placeholder="Enter Last Name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-email">Email</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-email" name="email" placeholder="Enter valid Email" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Teacher</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+
+<div class="nk-block nk-block-lg">
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="title nk-block-title">Teacher List</h4>
+            <div class="nk-block-des">
+                <p>List of all <code class="code-class">teachers</code>.</p>
+            </div>
+        </div>
+    </div>
+    <div class="card card-preview">
+        <div class="card-inner">
+            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col"><span class="sub-text">Thumb ID</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">First Name</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Middle Name</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Last Name</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Email</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for teacher in teachers %}
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col">{{ teacher.thumb_id }}</td>
+                    <td class="nk-tb-col">{{ teacher.first_name }}</td>
+                    <td class="nk-tb-col">{{ teacher.middle_name }}</td>
+                    <td class="nk-tb-col">{{ teacher.last_name }}</td>
+                    <td class="nk-tb-col">{{ teacher.email }}</td>
+                    <td class="nk-tb-col">
+                        <a href="{% url 'edit_teacher' teacher.id %}" class="btn btn-trigger btn-icon"
+                           data-toggle="tooltip" data-placement="top" title="Display">
+                            <em class="icon ni ni-eye-alt"></em>
+                        </a>
+                        <button class="btn btn-trigger btn-icon" data-toggle="modal" data-target="#deleteModal{{ teacher.id }}"
+                                data-placement="top" title="Delete">
+                            <em class="icon ni ni-trash"></em>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Delete Teacher Modal -->
+                <div class="modal fade" id="deleteModal{{ teacher.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Delete Teacher</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this teacher?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <a href="{% url 'delete_teacher' teacher.id %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Delete Teacher Modal -->
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-preview -->
+</div> <!-- nk-block -->
+{% endblock %}

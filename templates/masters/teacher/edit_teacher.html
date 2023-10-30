@@ -1,0 +1,114 @@
+{% extends "dashboard/base.html" %}{% block content %}
+
+<div class="nk-block nk-block-lg">
+  {% if message %}
+  <div class="alert alert-fill alert-success alert-icon">
+    <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{message}}
+  </div>
+  {% endif %}
+  <div class="nk-block-head">
+    <div class="nk-block-head-content">
+      <h4 class="title nk-block-title">Update teacher</h4>
+      <div class="nk-block-des">
+        <p>
+          You can update <code class="code-class">teacher</code> with
+          <code class="code-class"></code>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="card card-bordered">
+    <div class="card-inner">
+      <form method="post" class="form-validate is-alter" id="edit-teacher-form">
+        {% csrf_token %}
+        <div class="row g-gs">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-full-name">Thumb ID</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-thumb-id"
+                  name="thumb_id"
+                  value="{{ teacher.thumb_id }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-full-name">First Name</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-first-name"
+                  name="first_name"
+                  value="{{ teacher.first_name }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-full-name">Middle Name</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-middle-name"
+                  name="middle_name"
+                  value="{{ teacher.middle_name }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-full-name">Last Name</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-last-name"
+                  name="last_name"
+                  value="{{ teacher.last_name }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-full-name">Email</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-email"
+                  name="email"
+                  value="{{ teacher.email }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="form-group">
+              <button type="submit" class="btn btn-lg btn-primary">
+                Save Informations
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- .nk-block -->
+{% endblock %}

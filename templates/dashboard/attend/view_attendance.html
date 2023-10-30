@@ -1,0 +1,102 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form method="POST" class="form-validate is-alter">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h4 class="mb-3">{{ subject_type }} - {{ lecture }} </h4>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-time-slot">Time-Slot</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-time-slot" name="fva-time-slot"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value="" disabled>Select a option</option>
+                                    <option value="{{ time_slot|time:"H:i" }}" selected>{{ time_slot }}</option>
+                                    {% if r1 == 1 %}
+                                    <option value="10:15">10:15 a.m.</option>
+                                    {% endif %}
+                                    {% if r2 == 1 %}
+                                    <option value="11:15">11:15 a.m.</option>
+                                    {% endif %}
+                                    {% if r3 == 1 %}
+                                    <option value="13:15">1:15 p.m.</option>
+                                    {% endif %}
+                                    {% if r4 == 1 %}
+                                    <option value="14:15">2:15 p.m.</option>
+                                    {% endif %}
+                                    {% if r5 == 1 %}
+                                    <option value="15:30">3:30 p.m.</option>
+                                    {% endif %}
+                                    {% if r6 == 1 %}
+                                    <option value="16:30">4:30 p.m.</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                {% if message %}
+                <div class="alert alert-fill alert-success alert-icon">
+                    <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+                </div>
+                {% endif %}
+                <br>
+
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>BATU Prn</th>
+                            <th>Student Name</th>
+                            <th>Present</th>
+                            <th>Roll No</th>
+                            <th>Remarks</th>
+                            <th>Student PhnNo.</th>
+                            <th>Parent PhnNo. </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for attendance in attendance_list %}
+                        <tr {% if attendance.is_present == 0 %} style="background-color: #ffcccc;" {% endif %}>
+                            <td>{{ attendance.student.roll_no }}</td>
+                            <td>{{ attendance.student.batu_prn }}</td>
+                            <td>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="student_{{ attendance.student.id }}"
+                                           name="student_{{ attendance.student.id }}"
+                                           value="present" {% if attendance.is_present %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td>{{ attendance.student.roll_no }}</td>
+                            <td>
+                                <input type="text" class="form-control" name="remark_{{ attendance.student.id }}"
+                                       id="remark_{{ attendance.student.id }}" value="{{ attendance.remark }}">
+                            </td>
+                            <td>{{ attendance.student.self_phone_number }}</td>
+                            <td>{{ attendance.student.parents_phone_number }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+                <br>
+                <div class="form-group" style="text-align: right;">
+                    <button type="submit" class="btn btn-lg btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+{% endblock %}

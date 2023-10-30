@@ -1,0 +1,158 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-first-name">First Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-first-name" name="first_name" placeholder="Enter First Name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-middle-name">Middle Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-middle-name" name="middle_name" placeholder="Enter Middle Name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-last-name">Last Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-last-name" name="last_name" placeholder="Enter Last Name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-student_class">Student Class</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-student_class" name="student_class"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for c in classes %}
+                                    <option value="{{ c.id }}">Sem {{ c.sem.sem_num }} - {{ c.sem.get_sem_year_display }} {{ c.sem.department.short }} {{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-batch">Batch</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-batch" name="batch"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for batch in batches %}
+                                    <option value="{{ batch.id }}">{{ batch.batch_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-elective">Elective</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-elective" name="elective"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for elective in electives %}
+                                    <option value="{{ elective.id }}">{{ elective.elective_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add the rest of the form fields here following the same structure as above -->
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-batu_prn">Batu PRN</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-batu_prn" name="batu_prn" placeholder="Enter Unique BATU PRN" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-prn">College PRN</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-prn" name="prn" placeholder="Enter Unique College PRN" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-roll_no">Class Roll No</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-roll_no" name="roll_no" placeholder="Enter Class Roll No" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-email">Email</label>
+                            <div class="form-control-wrap">
+                                <input type="email" class="form-control" id="fva-email" name="email" placeholder="Enter valid Email" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-self-phone-number">Self Contact No</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-self-phone-number"
+                                       name="self_phone_number" placeholder="Enter your Phone No" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-parents-phone-number">Parents Contact No</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-parents-phone-number"
+                                       name="parents_phone_number" placeholder="Enter Parents Phone No" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-address">Address</label>
+                            <div class="form-control-wrap">
+                                <textarea class="form-control" id="fva-address" name="address" rows="3"
+                                          placeholder="Enter Address" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Save Information</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

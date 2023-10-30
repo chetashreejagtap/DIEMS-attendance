@@ -1,0 +1,53 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            {% if message %}
+            <div class="alert alert-fill alert-success alert-icon">
+                <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="alert alert-fill alert-danger alert-icon">
+                <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+            </div>
+            {% endif %}
+            <br>
+            <form method="POST" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-class-name">Class Name</label>
+                            <input type="text" class="form-control" id="fva-class-name" name="name"
+                                   value="{{ class_item.name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-semester">Semester</label>
+                            <select class="form-control form-select" id="fva-semester" name="semester" required>
+                                <option label="empty" value=""></option>
+                                {% for sem in teacher_semesters %}
+                                    <option value="{{ sem.id }}" {% if class_item.sem.id == sem.id %}selected{% endif %}>Sem {{ sem.sem_num }} {{ sem.get_sem_year_display }} {{ sem.department.short }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Update Class</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+<br>
+
+{% endblock %}

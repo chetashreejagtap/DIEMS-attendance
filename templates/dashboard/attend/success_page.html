@@ -1,0 +1,19 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <div class="row g-gs">
+                <div class="col-12 text-center">
+                    <h4 class="mb-3">Attendance Marked Successfully</h4>
+                    <p>Your attendance data has been recorded.</p>
+                </div>
+                <div class="col-12 text-center">
+                    <a href="{% url 'take_attendance' %}" class="btn btn-lg btn-primary">Back to Take Attendance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+{% endblock %}

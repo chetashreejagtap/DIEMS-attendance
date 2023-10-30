@@ -1,0 +1,56 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            {% if message %}
+                <div class="alert alert-fill alert-success alert-icon">
+                    <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+                </div>
+                {% endif %}
+                {% if error %}
+                <div class="alert alert-fill alert-danger alert-icon">
+                    <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+                </div>
+            {% endif %}
+            <form action="#" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-elective_name">Elective Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-elective_name" name="elective_name" required value="{{ elective_name }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-student_class">Student Class</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-student_class" name="student_class"
+                                    data-placeholder="Select a option" required>
+                                    {# Populate the select options based on 'classes' from context #}
+                                    {% for class in classes %}
+                                        <option value="{{ class.id }}" {% if class.id == student_class %} selected {% endif %}>
+                                            {{ class.sem.get_sem_year_display }} {{ class.sem.department.short }} {{ class.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Update Elective</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+{% endblock %}

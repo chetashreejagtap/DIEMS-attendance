@@ -1,0 +1,153 @@
+{% extends "dashboard/base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            {% if message %}
+            <div class="alert alert-fill alert-success alert-icon">
+                <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="alert alert-fill alert-danger alert-icon">
+                <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+            </div>
+            {% endif %}
+            <form method="POST" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject">Subject</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-subject" name="subject"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in subjects %}
+                                    <option value="{{ s.id }} ">{{ s.subject.get_subject_type_display }} - {{ s.subject.subject_name }} ( {{ s.sel_class.sem.get_sem_year_display }} {{ s.sel_class.sem.department }} {{ s.sel_class.name }} - {{ s.sel_class.sem.academic_year }}) {% if s.sel_batch %} : Batch {{ s.sel_batch.batch_name }} {% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-gs">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-start-date">Start Date</label>
+                            <input type="date" class="form-control" id="fva-start-date" name="startDate"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-end-date">End Date</label>
+                            <input type="date" class="form-control" id="fva-end-date" name="endDate" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Search Attendance</button>
+                        </div>
+                    </div>
+
+                    {% if error %}
+                    <div class="col-md-12">
+                        <div class="alert alert-danger alert-icon">
+                            <span><em class="icon ni ni-cross-circle"></em></span>
+                            {{ error }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+<br>
+
+<div class="nk-block nk-block-lg">
+    <div class="card card-preview">
+        <div class="card-inner">
+            <div class="nk-block-head-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="nk-block-title">{% if attendances %} Attendance of {{ sel_subject }} - From {{ start_date }} to {{ end_date }} ( {{ subject_assign.sel_class.sem.get_sem_year_display }} {{ subject_assign.teacher.department }} {{ subject_assign.sel_class.name }} ) {% else %} Search to display Attendance {% endif %} </h4>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="submit" id="downloadexcel" class="btn btn-lg btn-primary">Export Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div style="overflow-x: auto; overflow-y: auto; max-height: 600px;">
+                    {% if attendances %}
+                    <table id="example-table" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width: 40px;">roll_no</th>
+                            <th style="width: 240px;">name</th>
+                            {% for i in lectures_taken %}
+                            <th style="width: 100px;">lect{{ forloop.counter }}_{{ i.lecture_date|date:'j/n/y'|add:'_' }}{{ i.time_slot|time:'H:i' }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student_name, lecture_data in attendances.items %}
+                        <tr>
+                            <td>{{ students|get_student_rollno:student_name }}</td>
+                            <td>{{ student_name }}</td>
+                            {% for lecture_datetime, attendance_records in lecture_data.items %}
+                            <td style="width: 100px;">
+                                {% if attendance_records %}
+                                {% for attendance_record in attendance_records %}
+                                {% if attendance_record.is_present %}
+                                {{ attendance_record.subject.subject.att_score }}
+                                {% else %}
+                                0
+                                {% endif %}
+                                <br>
+                                {% endfor %}
+                                {% else %}
+                                <p>No Data Available</p>
+                                <br>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <script>
+                        document.getElementById('downloadexcel').addEventListener('click', function(){
+                            var table2excel = new Table2Excel();
+                            table2excel.export(document.querySelectorAll("#example-table"));
+                        });
+
+                    </script>
+                    {% else %}
+                    <p>No Attendance Data Available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <br>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

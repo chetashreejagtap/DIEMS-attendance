@@ -1,0 +1,103 @@
+{% extends "dashboard/base.html" %} {% block content %}
+<div class="nk-block nk-block-lg">
+  {% if error %}
+  <div class="alert alert-danger alert-icon">
+    <span><em class="icon ni ni-cross-circle"></em></span>
+    {{ error }}
+  </div>
+  <div class="col-md-12">
+    <div class="form-group">
+      <a href="{% url 'take_attendance'%}"
+        ><button type="submit" class="btn btn-lg btn-primary">
+          Back to Take Attendance
+        </button></a
+      >
+    </div>
+  </div>
+  {% endif %} {% if students %}
+  <div class="card card-bordered">
+    <div class="card-inner">
+      <form method="POST" class="form-validate is-alter">
+        {% csrf_token %}
+        <div class="row g-gs">
+          <div class="col-12">
+            <h4 class="mb-3">
+              Mark Attendance - {{ subject_name.subject.sem.get_sem_year_display
+              }} {{ subject_name.sel_class.name }} : {{
+              subject_name.sel_batch.batch_name }} {{
+              subject_name.sel_elective.elective_name }} {{
+              subject_name.subject.subject_name }} {{ time }} {{ date }}
+            </h4>
+          </div>
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th style="text-align: center">Present</th>
+                    <th>Roll No</th>
+                    <th>Remark</th>
+                    {# Add this column #}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in students %}
+                  <tr>
+                    <td>{{ student.roll_no }}</td>
+                    <td
+                      {%
+                      if
+                      lecture.student_to_highlight
+                      %}
+                      style="color: red"
+                      {%
+                      endif
+                      %}
+                    >
+                      {{student.first_name}} {{student.middle_name}}
+                      {{student.last_name}}
+                    </td>
+                    <td style="text-align: center">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="student_{{ student.id }}"
+                          name="student_{{ student.id }}"
+                          value="present"
+                          checked
+                        />
+                      </div>
+                    </td>
+                    <td>{{ student.roll_no }}</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="remark_{{ student.id }}"
+                        id="remark_{{ student.id }}"
+                      />
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <button type="submit" class="btn btn-lg btn-primary">
+                Submit Attendance
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+<!-- .nk-block -->
+{% endblock %}

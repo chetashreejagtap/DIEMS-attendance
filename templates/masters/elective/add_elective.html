@@ -1,0 +1,190 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form action="#" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-semester">Semester</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-semester" name="fva-semester"
+                                        data-placeholder="Select a Semester" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in semesters %}
+                                    <option value="{{ s.id }}"> Sem {{ s.sem_num }} {{ s.get_sem_year_display }} {{ s.department.short }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-class">Class</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-class" name="fva-class"
+                                        data-placeholder="Select a Class" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-elective_name">Theory Elective Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" maxlength="2" placeholder="Enter Theory Elective name" class="form-control" id="fva-elective_name" name="elective_name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Elective</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+
+<div class="nk-block nk-block-lg">
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="nk-block-title">Elective Details</h4>
+        </div>
+    </div>
+    <div class="card card-preview">
+        <div class="card-inner">
+            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col"><span class="sub-text">Elective Name</span></th>
+                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Student Class</span></th>
+                    <th class="nk-tb-col nk-tb-col-tools"><span class="sub-text"></span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for elective_item in electives %}
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col">
+                        <div class="user-card">
+                            <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                <span>{{ elective_item.elective_name }}</span>
+                            </div>
+                            <div class="user-info">
+                                <span class="tb-lead"><span class="dot dot-success d-md-none ml-1"></span></span>
+                                <span>{{ elective_item.elective_name }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                        <span class="tb-amount">{{ elective_item.student_class.sem.get_sem_year_display }} {{ elective_item.student_class.sem.department.name }} {{ elective_item.student_class.name }}</span>
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-tools">
+                        <ul class="nk-tb-actions gx-1">
+                            <li class="nk-tb-action">
+                                <a href="{% url 'display_elective' elective_item.id %}" class="btn btn-trigger btn-icon" data-toggle="tooltip" data-placement="top"
+                                   title="Display">
+                                    <em class="icon ni ni-eye-alt"></em>
+                                </a>
+                            </li>
+                            <li class="nk-tb-action">
+                                <button type="button" class="btn btn-trigger btn-icon" data-toggle="modal"
+                                        data-target="#confirmDeleteModal{{ elective_item.id }}" data-placement="top"
+                                        title="Delete">
+                                    <em class="icon ni ni-trash"></em>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                    <div class="modal fade" id="confirmDeleteModal{{ elective_item.id }}" tabindex="-1" role="dialog"
+                         aria-labelledby="confirmDeleteModalLabel{{ elective_item.id }}" aria-hidden="true">
+                        <!-- Modal content here... -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel{{ elective_item.id }}">Confirm
+                                        Deletion</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete the elective "{{ elective_item.elective_name }} - {{ elective_item.student_class.sem.get_sem_year_display }} {{ elective_item.student_class.sem.department }} {{ elective_item.student_class.name }}"?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Button to cancel deletion -->
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <!-- Button to confirm deletion, link it to your delete URL -->
+                                    <a href="{% url 'delete_elective' elective_item.id %}" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tr><!-- .nk-tb-item  -->
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-preview -->
+</div> <!-- nk-block -->
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // When the semester select box changes
+    $('#fva-semester').on('change', function() {
+        // Get the selected semester ID
+        var semId = $(this).val();
+
+        // Check if a semester is selected
+        if (semId) {
+            // Perform an AJAX request to get the classes
+            $.ajax({
+                url: '{% url "get_classes" %}', // Replace with your actual URL name
+                data: {'sem_id': semId},
+                dataType: 'json',
+                success: function(data) {
+                    var classSelect = $('#fva-class');
+                    classSelect.empty();
+                    classSelect.append('<option value="">Select Class</option>');
+
+                    // Populate the class select box with the retrieved classes
+                    $.each(data.classes, function(index, cls) {
+                        classSelect.append('<option value="' + cls.id + '">' + cls.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error('Error: ' + errorThrown);
+                    // Handle the error here if needed
+                }
+            });
+        } else {
+            // If no semester is selected, clear the class select box
+            $('#fva-class').empty();
+        }
+    });
+});
+</script>
+
+{% endblock %}

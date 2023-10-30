@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form method="POST" class="form-validate is-alter" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject">Subject</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-subject" name="fva-subject"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in subjects %}
+                                    <option value="{{ s.id }}" data-subject-type="{{ s.subject_type }}">{{ s.subject.get_subject_type_display }} - {{ s.subject.subject_name }} ( {{ s.sel_class.sem.get_sem_year_display }} {{ s.sel_class.sem.department.short }} {{ s.sel_class.name }} {{ s.sel_class.sem.academic_year }} ) {% if s.sel_batch %} : Batch {{ s.sel_batch.batch_name }} {% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label" for="excel_file">Excel Upload</label>
+                            <div class="form-control-wrap">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="excel_file" id="excel_file" required>
+                                    <label class="custom-file-label" for="excel_file">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Take Attendance</button>
+                        </div>
+                    </div>
+                    {% if error %}
+                    <div class="alert alert-danger alert-icon">
+                        <span><em class="icon ni ni-cross-circle"></em></span>
+                         {{ error }}
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+<br>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends "dashboard/base.html" %} {% block content %}
+<div class="nk-block nk-block-lg">
+  {% if message %}
+  <div class="alert alert-fill alert-success alert-icon">
+    <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message
+    }}
+  </div>
+  {% endif %} {% if error %}
+  <div class="alert alert-fill alert-danger alert-icon">
+    <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+  </div>
+  {% endif %}
+  <div class="card card-bordered">
+    <div class="card-inner">
+      <form method="post" class="form-validate is-alter">
+        {% csrf_token %}
+        <div class="row g-gs">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-first-name">First Name</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-first-name"
+                  name="first_name"
+                  value="{{ student.first_name }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-middle-name"
+                >Middle Name</label
+              >
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-middle-name"
+                  name="middle_name"
+                  value="{{ student.middle_name }}"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-last-name">Last Name</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-last-name"
+                  name="last_name"
+                  value="{{ student.last_name }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-student_class"
+                >Student Class</label
+              >
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-student_class"
+                  name="student_class"
+                  value="{{ student.student_class }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-batch">Batch</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-batch"
+                  name="batch"
+                  value="{{ student.batch }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-elective">Elective</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-elective"
+                  name="elective"
+                  value="{{ student.elective }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <!-- Add the rest of the form fields here following the same structure as above -->
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-batu_prn">Batu PRN</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-batu_prn"
+                  name="batu_prn"
+                  value="{{ student.batu_prn }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-prn">College PRN</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-prn"
+                  name="prn"
+                  value="{{ student.prn }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-roll_no">Class Roll No</label>
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-roll_no"
+                  name="roll_no"
+                  value="{{ student.roll_no }}"
+                  readonly
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-email">Email</label>
+              <div class="form-control-wrap">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="fva-email"
+                  name="email"
+                  value="{{ student.email }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-self-phone-number"
+                >Self Contact No</label
+              >
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-self-phone-number"
+                  name="self_phone_number"
+                  value="{{ student.self_phone_number }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="fva-parents-phone-number"
+                >Parents Contact No</label
+              >
+              <div class="form-control-wrap">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fva-parents-phone-number"
+                  name="parents_phone_number"
+                  value="{{ student.parents_phone_number }}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="fva-address">Address</label>
+              <div class="form-control-wrap">
+                <input
+                  type=" text"
+                  class="form-control"
+                  id="fva-address"
+                  name="address"
+                  value="{{student.address}}"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <button type="submit" class="btn btn-lg btn-primary">
+                Save Information
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

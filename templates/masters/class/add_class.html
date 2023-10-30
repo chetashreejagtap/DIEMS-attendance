@@ -1,0 +1,154 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error }}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form method="POST" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-semester">Semester</label>
+                            <select class="form-control form-select" id="fva-semester" name="fva-semester"
+                                        data-placeholder="Select a Semester" required>
+                                <option label="empty" value=""></option>
+                                {% for sem in teacher_semesters %}
+                                <option value="{{ sem.id }}">Sem {{ sem.sem_num }} {{ sem.get_sem_year_display }} {{ sem.department.short }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-class-name">Class Name</label>
+                            <input type="text" placeholder="Enter Class name:   Eg - A , B " class="form-control" id="fva-class-name" name="name" required maxlength="1" title="Please enter a single uppercase letter">
+                            <div class="invalid-feedback">Please enter a single uppercase letter.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Class</button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+<br>
+
+<div class="nk-block-head">
+    <div class="nk-block-head-content">
+        <h4 class="nk-block-title">All Classes</h4>
+    </div>
+</div>
+
+<div class="nk-block nk-block-lg">
+    <!-- Recent Class Table -->
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <table class="datatable-init nk-tb-list nk-tb-ulist">
+                <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col tb-col-md"><span class="sub-text">No.</span></th>
+                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Semester</span></th>
+                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Class Name</span></th>
+                    <th class="nk-tb-col nk-tb-col-tools text-right">
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for class in department_classes %}
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col tb-col-md">
+                        <span>{{ forloop.counter }}</span>
+                    </td>
+                    <td class="nk-tb-col tb-col-lg">
+                        <span>Sem {{ class.sem.sem_num }} {{ class.sem.get_sem_year_display }} {{ class.sem.department.short }}</span>
+                    </td>
+                    <td class="nk-tb-col tb-col-lg">
+                        <span> {{ class.name }} </span>
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-tools">
+                        <ul class="nk-tb-actions gx-1">
+                            <!-- Button to trigger the delete modal -->
+                            <li class="nk-tb-action">
+                                <button type="button" class="btn btn-trigger btn-icon" data-toggle="modal"
+                                        data-target="#confirmDeleteModal{{ class.id }}" data-placement="top"
+                                        title="Delete">
+                                    <em class="icon ni ni-trash"></em>
+                                </button>
+                            </li>
+                            <!-- Button to display the class -->
+                            <li class="nk-tb-action">
+                                <a href="{% url 'display_class' class.id %}" class="btn btn-trigger btn-icon"
+                                   data-toggle="tooltip" data-placement="top"
+                                   title="Display">
+                                    <em class="icon ni ni-eye"></em>
+                                </a>
+                            </li>
+                        </ul>
+                    </td>
+                    <div class="modal fade" id="confirmDeleteModal{{ class.id }}" tabindex="-1" role="dialog"
+                         aria-labelledby="confirmDeleteModalLabel{{ class.id }}" aria-hidden="true">
+                        <!-- Modal content here... -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel{{ class.id }}">Confirm
+                                        Deletion</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete the class "{{ class.sem.get_sem_year_display }} {{ class.sem.department }} {{ class.name }} - {{ class.sem.academic_year }}"?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Button to cancel deletion -->
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <!-- Button to confirm deletion, link it to your delete URL -->
+                                    <a href="{% url 'delete_class' class.id %}" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-bordered -->
+</div><!-- .nk-block -->
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var classNameInput = document.getElementById('fva-class-name');
+
+        classNameInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    });
+</script>
+
+{% endblock %}

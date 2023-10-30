@@ -1,0 +1,214 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form action="#" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-semester">Semester</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-semester" name="fva-semester"
+                                        data-placeholder="Select a Semester" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in semesters %}
+                                    <option value="{{ s.id }}"> Sem {{ s.sem_num }} {{ s.get_sem_year_display }} {{ s.department.short }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-class">Class</label>
+                            <div class="form-control-wrap ">
+                                <select class="form-control form-select" id="fva-class" name="sel_class"
+                                        data-placeholder="Select a Class" required>
+                                    <option label="empty" value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Search Attendance</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+
+<div class="nk-block nk-block-lg">
+    {% if group_attendance %}
+    <div class="card card-preview">
+        <div class="card-inner">
+            <div class="nk-block-head-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="nk-block-title">{% if attendance_records %} Attendance Of Selected Class {% else %}
+                            Search to display Attendance {% endif %} </h4>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="submit" id="downloadexcel" class="btn btn-lg btn-primary">Export Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <div style="overflow-y: auto;">
+
+                        <table id="example-table" class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+                                        <strong>M. S. P. M.'s</strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+                                        Deogiri Institute of Engineering and Management Studies
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+                                        Department of {{ request.user.user_obj.department.name }}
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+                                        (Academic Year: {{ class.sem.department.academic_year }}-{% with class.sem.department.academic_year|add:"1" as number %}{{ number }}{% endwith %} Sem-{{ class.sem.sem_num }})
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+                                        {{ class.sem.get_sem_year_display }} {{ class.sem.department.short }} {{class.name}} Attendance Record
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td colspan="{{subject_len}}">
+
+                                    </td>
+                                </tr>
+                            </thead>
+                            {% for data in group_attendance %}
+                            <thead>
+                            <tr>
+                                <th style="width: 50px;">Roll No</th>
+                                <th style="width: 50px;">Batu Prn</th>
+                                <th style="width: 240px;">Name</th>
+                                {% for subject, total in data.subjects %}
+                                <th style="width: 100px;">{{ subject.subject_code }}({{ total }})</th>
+                                {% endfor %}
+                                <th style="width: 100px;">Other({{ total_other }})</th>
+                                <th style="width: 100px;">Total Attendance({{data.lectures_all}})</th>
+                                <th style="width: 100px;">%</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for student, records, final_at in data.attendance_records %}
+                            <tr {% if final_at < 75 %} style="background-color: pink;" {% endif %}>
+                                <td>{{ student.roll_no }}</td>
+                                <td>{{ student.batu_prn }}</td>
+                                <td>{{ student.first_name }} {% if student.middle_name == "nan" %} {% else %} {{ student.middle_name }} {% endif %} {{ student.last_name }}
+                                </td>
+                                {% for record in records %}
+                                {% if record.0 != 'N/A' %}
+                                <td>
+                                    {{ record.0 }}
+                                </td>
+                                {% else %}
+                                <td>
+                                    0
+                                </td>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                            {% endfor %}
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <p>No Attendance Data Available</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.getElementById('downloadexcel').addEventListener('click', function() {
+        var table2excel = new Table2Excel();
+        table2excel.export(document.querySelectorAll("#example-table"));
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // When the semester select box changes
+        $('#fva-semester').on('change', function() {
+            // Get the selected semester ID
+            var semId = $(this).val();
+
+            // Check if a semester is selected
+            if (semId) {
+                // Perform an AJAX request to get the classes
+                $.ajax({
+                    url: '{% url "get_classes" %}', // Replace with your actual URL name
+                    data: {'sem_id': semId},
+                    dataType: 'json',
+                    success: function(data) {
+                        var classSelect = $('#fva-class');
+                        classSelect.empty();
+                        classSelect.append('<option value="">Select Class</option>');
+
+                        // Populate the class select box with the retrieved classes
+                        $.each(data.classes, function(index, cls) {
+                            classSelect.append('<option value="' + cls.id + '">' + cls.name + '</option>');
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error('Error: ' + errorThrown);
+                        // Handle the error here if needed
+                    }
+                });
+            } else {
+                // If no semester is selected, clear the class select box
+                $('#fva-class').empty();
+            }
+        });
+    });
+
+
+</script>
+
+{% endblock %}

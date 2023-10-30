@@ -1,0 +1,16 @@
+Run MySQL CommandLine Client 
+1. drop database attendance;
+2. create database attendance;
+
+3. open your new_attendance folder and run this command 
+
+mysql -u root -p attendance < backup_25_9_23.sql
+Enter password: root 
+
+4. make migrations , migrate , runserver 
+
+admin@dietms.org
+pass: ******
+
+sandeepshah@dietms.org 
+Cricket@123

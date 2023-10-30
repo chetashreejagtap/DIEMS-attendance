@@ -1,0 +1,187 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="nk-block nk-block-lg">
+    {% if message %}
+    <div class="alert alert-fill alert-success alert-icon">
+        <em class="icon ni ni-check-circle"></em> <strong>Done</strong>, {{ message }}
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-fill alert-danger alert-icon">
+        <em class="icon ni ni-cross-circle"></em> <strong>Error</strong>, {{ error}}
+    </div>
+    {% endif %}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <form action="{% url 'add_subject' %}" method="post" class="form-validate is-alter">
+                {% csrf_token %}
+                <div class="row g-gs">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject_name">Subject Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-subject_name" name="subject_name"
+                                       placeholder="Enter Subject Name" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-sem">Semester</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-sem" name="sem"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    {% for s in semesters %}
+                                    <option value="{{ s.id }}">Sem {{ s.sem_num }} {{ s.get_sem_year_display }} {{ s.department.short }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject_type">Subject Type</label>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" id="fva-subject_type" name="subject_type"
+                                        data-placeholder="Select a option" required>
+                                    <option label="empty" value=""></option>
+                                    <option value="1">Theory</option>
+                                    <option value="2">Practical</option>
+                                    <option value="3">Elective</option>
+                                    <option value="4">Other Session</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-subject_code">Subject Code</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="fva-subject_code" name="subject_code" placeholder="Enter Subject Code" required>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-description">Description</label>
+                            <div class="form-control-wrap">
+                                <textarea class="form-control" id="fva-description" name="description"
+                                          rows="5" placeholder="Enter Description "></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="fva-att_score">Attendance Score</label>
+                            <div class="form-control-wrap">
+                                <input type="number" class="form-control" id="fva-att_score" name="att_score" placeholder="Enter Subject Attendance Score" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Subject</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- .nk-block -->
+
+<div class="nk-block nk-block-lg">
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="nk-block-title">Subject Details</h4>
+        </div>
+    </div>
+    <div class="card card-preview">
+        <div class="card-inner">
+            <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Subject Name</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Semester</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Subject Type</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Subject Code</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Description</span></th>
+                    <th class="nk-tb-col"><span class="sub-text">Attendance Score</span></th>
+                    <th class="nk-tb-col nk-tb-col-tools"><span class="sub-text">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for subject in subjects %}
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col tb-col-mb">
+                        <span class="tb-amount">{{ subject.subject_name }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">Sem {{ subject.sem.sem_num }} {{ subject.sem.get_sem_year_display }} {{ subject.sem.department.short }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject.get_subject_type_display }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject.subject_code }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject.description }}</span>
+                    </td>
+                    <td class="nk-tb-col">
+                        <span class="tb-amount">{{ subject.att_score }}</span>
+                    </td>
+                    <td class="nk-tb-col nk-tb-col-tools">
+                        <ul class="nk-tb-actions gx-1">
+                            <li class="nk-tb-action">
+                                <a href="{% url 'display_subject' subject.subject_id %}" class="btn btn-trigger btn-icon"
+                                   data-toggle="tooltip" data-placement="top"
+                                   title="Display">
+                                    <em class="icon ni ni-eye-alt"></em>
+                                </a>
+                            </li>
+
+                            <li class="nk-tb-action">
+                                <button type="button" class="btn btn-trigger btn-icon" data-toggle="modal"
+                                        data-target="#confirmDeleteModal{{ subject.subject_id }}" data-placement="top"
+                                        title="Delete">
+                                    <em class="icon ni ni-trash"></em>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                    <div class="modal fade" id="confirmDeleteModal{{ subject.subject_id }}" tabindex="-1" role="dialog"
+                         aria-labelledby="confirmDeleteModalLabel{{ subject.subject_id }}" aria-hidden="true">
+                        <!-- Modal content here... -->
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel{{ subject.subject_id }}">Confirm
+                                        Deletion</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete the subject "{{ subject.subject_name }}"?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Button to cancel deletion -->
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <!-- Button to confirm deletion, link it to your delete URL -->
+                                    <a href="{% url 'delete_subject' subject.subject_id %}" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tr><!-- .nk-tb-item  -->
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-preview -->
+</div> <!-- nk-block -->
+{% endblock %}
